@@ -6,9 +6,10 @@ import { useChat } from "@ai-sdk/react";
 export default function ChatPage() {
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, error, stop } = useChat({
-    api: "/api/chat",
-  });
+  // const { messages, sendMessage, status, error, stop } = useChat({
+  //   api: "/api/chat",
+  // });
+  const { messages, sendMessage, status, error, stop } = useChat();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
