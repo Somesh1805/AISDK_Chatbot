@@ -7,7 +7,21 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: groq("llama-3.3-70b-versatile"),
-      messages: convertToModelMessages(messages),
+      messages: [
+  {
+    role: "system",
+    content:
+      `
+You are a coding assistant.
+
+Only answer programming-related questions.
+If the user asks anything unrelated to programming, politely reply:
+"I'm only able to help with coding-related questions."
+Keep every answer under 3 sentences.
+    `,
+  },
+  ...convertToModelMessages(messages),
+],
     });
 
     result.usage.then((usage) => {
