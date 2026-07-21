@@ -25,7 +25,7 @@ export default function ChatPage() {
     <div className="flex flex-col w-full max-w-3xl mx-auto min-h-screen py-8">
 
       <h1 className="text-3xl font-bold text-center mb-8">
-        🤖 Aura_Smash AI Chat
+        🤖 Somesh AI Chat
       </h1>
 
       <div className="flex-1 space-y-4 mb-24">
