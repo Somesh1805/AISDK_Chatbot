@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 import { db } from "../index";
 import { chatSessions, messages } from "../schema";
 
@@ -5,6 +7,7 @@ export async function createChatSession() {
   const [chat] = await db
     .insert(chatSessions)
     .values({
+      id: randomUUID(),
       title: "New Chat",
     })
     .returning();
