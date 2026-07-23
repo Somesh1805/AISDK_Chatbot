@@ -22,7 +22,7 @@ export async function saveUserMessage(
   await db.insert(messages).values({
     chatId,
     role: "user",
-    content,
+    content,  
   });
 }
 
