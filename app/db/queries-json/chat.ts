@@ -106,8 +106,9 @@ export async function updateSessionTitle(
 export async function getConversation(sessionId: string) {
   const [chat] = await db
     .select()
-    .from(chatSessionsJson)
+    .from(chatSessionsJson) 
     .where(eq(chatSessionsJson.id, sessionId));
 
   return chat?.conversation;
 }
+

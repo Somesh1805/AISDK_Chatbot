@@ -7,6 +7,7 @@ import {
   appendAIMessage,
   getSession,
   updateSessionTitle,
+  getConversation,
 } from "@/app/db/queries-json/chat";
 
 export async function POST(req: Request) {
@@ -23,11 +24,37 @@ export async function POST(req: Request) {
     // Save user message
     await appendUserMessage(currentSessionId, message);
 
-    // AI response
-    const { text } = await generateText({
-      model: groq("llama-3.3-70b-versatile"),
-      prompt: message,
-    });
+    // // AI response
+    // const { text } = await generateText({
+    //   model: groq("llama-3.3-70b-versatile"),
+    //   prompt: message,
+    // });
+
+    // Load previous conversation
+const conversation = await getConversation(currentSessionId);
+
+let prompt = "";
+
+if (conversation) {
+  conversation.userMessages.forEach(
+    (user: { content: string }, index: number) => {
+      prompt += `User: ${user.content}\n`;
+
+      if (conversation.assistantMessages[index]) {
+        prompt += `Assistant: ${conversation.assistantMessages[index].content}\n`;
+      }
+    }
+  );
+}
+
+// Current message
+prompt += `User: ${message}`;
+
+// AI response
+const { text } = await generateText({
+  model: groq("llama-3.3-70b-versatile"),
+  prompt,
+});
 
     // Generate title only once
     const session = await getSession(currentSessionId);
@@ -78,4 +105,4 @@ Rules:
       }
     );
   }
-}
+} 
