@@ -109,11 +109,7 @@ async function loadConversation(sessionId: string) {
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    const sessionsRes = await fetch("/api/sessions");
-const sessions = await sessionsRes.json();
-
-setSessions(sessions);
-
+    
     setIsLoading(true);
 
     try {
@@ -129,6 +125,17 @@ setSessions(sessions);
       });
 
       const data = await response.json();
+
+      setSessions((prev) =>
+  prev.map((session) =>
+    session.id === data.sessionId
+      ? {
+          ...session,
+          title: data.title,
+        }
+      : session
+  )
+);
 
       if (!sessionId) {
         setSessionId(data.sessionId);
