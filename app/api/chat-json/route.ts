@@ -1,5 +1,6 @@
-import { generateText } from "ai";
+import { generateText, stepCountIs } from "ai";
 import { groq } from "@ai-sdk/groq";
+import { getContext7Tools } from "@/lib/mcp/context7";
 
 import {
   createSession,
@@ -31,30 +32,75 @@ export async function POST(req: Request) {
     // });
 
     // Load previous conversation
+// const conversation = await getConversation(currentSessionId);
+
+// let prompt = "";
+
+// if (conversation) {
+//   conversation.userMessages.forEach(
+//     (user: { content: string }, index: number) => {
+//       prompt += `User: ${user.content}\n`;
+
+//       if (conversation.assistantMessages[index]) {
+//         prompt += `Assistant: ${conversation.assistantMessages[index].content}\n`;
+//       }
+//     }
+//   );
+// }
+
+// // Current message
+// prompt += `User: ${message}`;
+
 const conversation = await getConversation(currentSessionId);
 
-let prompt = "";
+const history: {
+  role: "user" | "assistant";
+  content: string;
+}[] = [];
 
 if (conversation) {
   conversation.userMessages.forEach(
     (user: { content: string }, index: number) => {
-      prompt += `User: ${user.content}\n`;
+      history.push({
+        role: "user",
+        content: user.content,
+      });
 
       if (conversation.assistantMessages[index]) {
-        prompt += `Assistant: ${conversation.assistantMessages[index].content}\n`;
+        history.push({
+          role: "assistant",
+          content: conversation.assistantMessages[index].content,
+        });
       }
     }
   );
 }
 
-// Current message
-prompt += `User: ${message}`;
+history.push({
+  role: "user",
+  content: message,
+});
 
 // AI response
+// 
+// const { text } = await generateText({
+//   model: groq("llama-3.3-70b-versatile"),
+//   messages: history,
+// });
+
+const tools = await getContext7Tools();
+
+// The model decides for itself whether a question needs a docs lookup,
+// and can call resolve-library-id / query-docs (or skip them entirely).
 const { text } = await generateText({
   model: groq("llama-3.3-70b-versatile"),
-  prompt,
+  system:
+    "You are an AI SDK expert. When a question needs current AI SDK documentation, use the available tools to look it up before answering.",
+  messages: history,
+  tools,
+  stopWhen: stepCountIs(5),
 });
+
 
     // Generate title only once
     const session = await getSession(currentSessionId);

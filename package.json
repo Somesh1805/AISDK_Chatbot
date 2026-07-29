@@ -13,6 +13,7 @@
     "@ai-sdk/groq": "^2.0.45",
     "@ai-sdk/openai": "^4.0.16",
     "@ai-sdk/react": "^2.0.218",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "ai": "^5.0.216",
     "drizzle-orm": "^0.45.2",
     "next": "16.2.10",
